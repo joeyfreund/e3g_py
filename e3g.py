@@ -8,6 +8,7 @@ import io
 
 from libe3g.error import *
 from libe3g import cryptmanager as cm
+from libe3g import cryptmode
 from libe3g import log
 from libe3g import util
 
@@ -49,11 +50,29 @@ def _init_new_secret_folder(folder_name, usr_pass):
     dot_e3g = {}
     dot_e3g['salt'] = cm.get_new_random_salt()
 
+    tmp_filenames = os.listdir(folder_name)
+    plaintext_filenames = [tmp_fname  for tmp_fname in tmp_filenames if tmp_fname != '.e3g']
+    log.vv("file names of files found at src: " + str(plaintext_filenames))
+
+
+    dot_e3g['src_annon_names'] = [(pfname, cryptmode.get_new_random_filename()) for pfname in plaintext_filenames]
+    #log.vvv(dot_e3g['src_annon_names'])
+
+
+    # now save the .e3g file into './sf' folder
     util.save_dict_as_json_to_pathname(dst_pathname=dot_e3g_fpath, py_dict=dot_e3g)
 
-
+    # now make shadow files in './sf_shadow' for everything that lives in '.sf_shadow'
     tc = cm.Transcryptor(usr_pass=usr_pass, salt=dot_e3g['salt'])
     tc.encrypt_file(src=dot_e3g_fpath, dst=os.path.join(shadow_dir, '.e3g'))
+
+    for src_name, annon_name in dot_e3g['src_annon_names']:
+        src_pathname = os.path.join(folder_name, src_name)
+        annon_pathname = os.path.join(shadow_dir, annon_name)
+        log.v(src_pathname + ' >>>> ' + annon_pathname)
+
+        tc.encrypt_file(src=src_pathname, dst=annon_pathname)
+
 
 
 
@@ -70,6 +89,13 @@ def _parse_cmdline(arguments):
     # initsd (init new secret dir)
     # ms (make shadow) (rdycommit) ( no option == everything) (list of files or dirs == just those)
     # us (un-shadow)
+
+    # TODO remove this
+    shadow_files = os.listdir('./sf_shadow')
+    for shadow_file in shadow_files:
+        os.remove(os.path.join('./sf_shadow', shadow_file))
+    os.removedirs('./sf_shadow')
+
 
     # TODO remove the hard code, ask the user for this.
     usr_pass = 'riscvryzenplz48163264'

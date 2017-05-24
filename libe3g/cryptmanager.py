@@ -53,10 +53,16 @@ class Transcryptor(object):
 
         # kdf.derive returns a str (bytes object) (which is not encoded in hex or b64 or anything else)
         # Fernet requires  urlsafe_b64encode
-        self.encryption_key = base64.urlsafe_b64encode( kdf.derive(key_material=usr_pass))
+        encryption_key = base64.urlsafe_b64encode( kdf.derive(key_material=usr_pass))
 
-        log.hazard('encryption key in urlsafe base 64: \n' + self.encryption_key)
+        log.hazard('encryption key in urlsafe base 64: \n' + encryption_key)
 
+        # create a new fernet instance
+        self._fernet = Fernet(key=encryption_key)
+
+        # now to transcrypt simply:
+        # ciphertext_token = self._fernet.encrypt(b"my deep dark secrets")
+        # plaintext =  self._fernet.decrypt(ciphertext_token)
 
 
         # this returns None if ok, else raises InvalidKey error, also u need a new kdf object,
@@ -69,6 +75,20 @@ class Transcryptor(object):
         """ Given the pathname to a source file, encrypt it and save it into another file whose pathname is dst.  """
 
         log.fefr('encrypt_file() called, with src: >>{}<< dst: >>{}<<'.format(src, dst))
+
+        src_fhandle = open(src, 'rb')
+        dst_fhandle = open(dst, 'wb')
+
+        src_bytes = src_fhandle.read()
+
+        dst_bytes = self._fernet.encrypt(src_bytes)
+
+        # log.vvv('src_bytes: ' + src_bytes)
+        # log.vvv('dst_bytes: ' + dst_bytes)
+        # log.v( "dst_bytes in hex: " + base64.urlsafe_b64decode( dst_bytes ).encode('hex') )
+
+        dst_fhandle.write(dst_bytes)
+
 
 
 

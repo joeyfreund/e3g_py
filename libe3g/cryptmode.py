@@ -32,7 +32,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat import backends
 
-backend = backends.default_backend()
+
 
 
 
@@ -74,6 +74,7 @@ def _make_kdf_1(salt):
 
     assert None != salt
 
+    backend = backends.default_backend()
     algorithm = hashes.SHA256()
     length = 32
     iterations = 1000 * 1000   # 1 million rounds of sha256
@@ -87,7 +88,7 @@ def _make_kdf_2(salt):
 
     assert None != salt
 
-
+    backend = backends.default_backend()
     algorithm = hashes.SHA512()
     length = 32
     iterations = 2000 * 1000 # 2 million rounds of sha512
@@ -97,12 +98,12 @@ def _make_kdf_2(salt):
 
 
 
-def get_random_bytes(size):
-    """ Return size many bytes. This is from a seeded sequence when system is in insecure mode (for debug/devel),
-     and from the OS random source otherwise (/dev/urandom on linux). 
+def get_new_random_salt_for_current_mode():
+    """ Return a new salt for key derivation. Based on the defaults of the current crypt mode.
      """
+    log.fefrv("get_new_random_salt_for_current_mode() called")
 
-    log.fefrv("get_random_bytes() called")
+    size = 32
 
     if is_in_insecure_rand_mode():
         temp = b'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -113,11 +114,14 @@ def get_random_bytes(size):
     return os.urandom(size)
 
 
-def get_new_random_salt_for_current_mode():
-    """ Return a new salt for key derivation. Based on the defaults of the current crypt mode.
-     """
-    log.fefrv("get_new_random_salt_for_current_mode() called")
 
-    result = get_random_bytes(size=32)
+def get_new_random_filename():
+    """ Return a new random filename. This from os urandom in production mode and predictable sequence otherwise. """
+
+    size = 48
+
+    result = os.urandom(size).encode('hex')
+
+    log.fefrv("get_new_random_filename() returning. new file name is: \n " + result)
 
     return result
