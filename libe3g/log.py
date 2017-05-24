@@ -80,17 +80,25 @@ def v(msg, label=True):
 def hazard(msg, label=True):
     """ print log msgs that are in "hazardous" category. These msgs should not be printed in a production build. """
 
+    term_red   = "\033[1;31m"
+    term_blue  = "\033[1;34m"
+    term_cyan  = "\033[1;36m"
+    term_green = "\033[0;32m"
+    term_reset = "\033[0;0m"
+    term_bold    = "\033[;1m"
+    term_reverse = "\033[;7m"
+
     if not should_print_insecure_log_msgs:
         return
 
     final_msg = None
 
     if label:
-        final_msg = '***** hazardous msg: ' + str(msg)
+        final_msg =  '***** hazardous log: ' + str(msg)
     else:
         final_msg = str(msg)
 
-    print final_msg
+    print term_red + final_msg + term_reset
 
 
 
