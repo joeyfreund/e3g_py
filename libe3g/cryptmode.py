@@ -7,9 +7,11 @@
 
 # TODO
 # NOTE
-## ATTENTION: if INSECURE_DEBUG_MODE is true, the system is not secure.
+## ATTENTION: if any of these insecure modes are enabled, the system is not secure.
 
-_INSECURE_DEBUG_MODE = False
+_INSECURE_RAND_SRC = False
+
+_INSECURE_LOG_MSGS = True
 #-----------------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------
@@ -34,14 +36,22 @@ backend = backends.default_backend()
 
 
 
+def should_print_insecure_log_msgs():
+    """ Return true when insecure log msgs are desired (during development) returns false in production """
 
-def is_in_insecure_debug_mode():
-    """ Return true when the system is running in the completely insecure debug mode. False otherwise. 
-     Also prints warning to console everytime mode is queried, if the system is in insecure debug mode.
+    return _INSECURE_LOG_MSGS
+
+
+
+def is_in_insecure_rand_mode():
+    """ Return true when the system is running in the insecure random source. False otherwise. 
+     Also prints warning to console every time mode is queried.
+     
+     This method should return False in a production environment.
      """
-    if _INSECURE_DEBUG_MODE:
-        print "********************************************   Warning   ********************************************"
-        print "E3G is in debug mode. This is 4 development only, and not secure. A usr should never see this msg."
+
+    if _INSECURE_RAND_SRC:
+        print "*******  Warning: system is in INSECURE RAND SRC MODE. (use this only in development). "
 
         return True
 
@@ -80,7 +90,7 @@ def _make_kdf_2(salt):
 
     algorithm = hashes.SHA512()
     length = 32
-    iterations = 2000 * 1000 # 2 million rounds of sha256
+    iterations = 2000 * 1000 # 2 million rounds of sha512
 
     kdf = PBKDF2HMAC(algorithm=algorithm, length=length, salt=salt, iterations=iterations, backend=backend)
     return kdf
@@ -88,13 +98,13 @@ def _make_kdf_2(salt):
 
 
 def get_random_bytes(size):
-    """ Return size many bytes. This is from a seeded sequence when system is in insecure debug mode,
-     and from the OS random source otherwise. 
+    """ Return size many bytes. This is from a seeded sequence when system is in insecure mode (for debug/devel),
+     and from the OS random source otherwise (/dev/urandom on linux). 
      """
 
     log.fefrv("get_random_bytes() called")
 
-    if is_in_insecure_debug_mode():
+    if is_in_insecure_rand_mode():
         temp = b'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         factor = (size // len(temp)) + 1
         temp2 = temp * factor
