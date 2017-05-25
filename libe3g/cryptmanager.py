@@ -56,6 +56,7 @@ class Transcryptor(object):
         encryption_key = base64.urlsafe_b64encode( kdf.derive(key_material=usr_pass))
 
         log.hazard('encryption key in urlsafe base 64: \n' + encryption_key)
+        log.hazard('encryption key in hex: \n' + str(base64.urlsafe_b64decode(encryption_key).encode('hex')))
 
         # create a new fernet instance
         self._fernet = Fernet(key=encryption_key)
@@ -74,7 +75,7 @@ class Transcryptor(object):
     def encrypt_file(self, src, dst):
         """ Given the pathname to a source file, encrypt it and save it into another file whose pathname is dst.  """
 
-        log.fefr('encrypt_file() called, with src: >>{}<< dst: >>{}<<'.format(src, dst))
+        log.fefrv('encrypt_file() called, with src: >>{}<< dst: >>{}<<'.format(src, dst))
 
         src_fhandle = open(src, 'rb')
         dst_fhandle = open(dst, 'wb')
@@ -97,5 +98,19 @@ class Transcryptor(object):
         """ Given the pathname to a source file, decrypt it and save it into another file whose pathname is dst.  """
 
 
-        pass
+        log.fefr('decrypt_file() called, with src: >>{}<< dst: >>{}<<'.format(src, dst))
+
+        src_fhandle = open(src, 'rb')
+        dst_fhandle = open(dst, 'wb')
+
+        src_bytes = src_fhandle.read()
+
+        dst_bytes = self._fernet.decrypt(src_bytes)
+
+        # log.vvv('src_bytes: ' + src_bytes)
+        # log.vvv('dst_bytes: ' + dst_bytes)
+        # log.v( "dst_bytes in hex: " + base64.urlsafe_b64decode( dst_bytes ).encode('hex') )
+
+        dst_fhandle.write(dst_bytes)
+
 

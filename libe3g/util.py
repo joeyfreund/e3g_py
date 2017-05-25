@@ -31,20 +31,35 @@ def save_dict_as_json_to_pathname(dst_pathname, py_dict):
     assert isinstance(dst_pathname, str) or isinstance(dst_pathname, unicode)
     assert isinstance(py_dict, dict)
 
-    dot_e3g_fhandle = open(dst_pathname, 'wb')
+    fhandle = open(dst_pathname, 'wb')
 
-    json.dump(py_dict, dot_e3g_fhandle, ensure_ascii=False, indent=4, sort_keys=True)
+    json.dump(py_dict, fhandle, ensure_ascii=False, indent=4, sort_keys=True)
 
     # alternative using dumps method.
-    # dot_e3g_serialized = json.dumps(py_dict, ensure_ascii=False, indent=4, sort_keys=True)
+    # serial_data = json.dumps(py_dict, ensure_ascii=False, indent=4, sort_keys=True)
     # log.vvv('dumping serialized dict to file: ' + str(dst_pathname))
-    # log.vvv(dot_e3g_serialized)
-    #dot_e3g_fhandle.write( dot_e3g_serialized )
+    # log.vvv(serial_data)
+    # fhandle.write( serial_data )
 
-    dot_e3g_fhandle.flush()
-    dot_e3g_fhandle.close()
+    fhandle.flush()
+    fhandle.close()
 
     log.fefrv('save_dict_as_json_to_pathname() returning')
+
+def get_dict_from_json_at_pathname(src_pathname):
+    """ Given a pathname to a file containing a JSON serialized object, read it, make a py dict from it 
+    and return it. """
+
+    log.fefrv('get_dict_from_json_at_pathname() called, src pathname: ' + str(src_pathname))
+    assert isinstance(src_pathname, str) or isinstance(src_pathname, unicode)
+
+    fhandle = open(src_pathname, 'rb')
+    result_dict = json.load(fhandle)
+
+    # print type(result_dict)  # returns <type dict>
+
+    log.fefrv('get_dict_from_json_at_pathname() returning with result: ' + str(result_dict))
+    return result_dict
 
 if '__main__' == __name__:
 

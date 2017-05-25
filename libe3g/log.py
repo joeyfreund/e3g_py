@@ -47,6 +47,24 @@ def fefr(msg, label=True):
 
 
 #-----------------------------------------------------------------------------------------------------------------------
+def vvvv(msg, label=True):
+    """ print log msgs that are in "triple verbose and verified" category. """
+
+    if True:
+        return
+
+    final_msg = None
+
+    if label:
+        final_msg = 'vvv: ' + str(msg)
+    else:
+        final_msg = str(msg)
+
+    print final_msg
+
+
+
+#-----------------------------------------------------------------------------------------------------------------------
 def vvv(msg, label=True):
     """ print log msgs that are in "triple verbose" category. """
 
