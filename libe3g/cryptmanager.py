@@ -98,7 +98,7 @@ class Transcryptor(object):
         """ Given the pathname to a source file, decrypt it and save it into another file whose pathname is dst.  """
 
 
-        log.fefr('decrypt_file() called, with src: >>{}<< dst: >>{}<<'.format(src, dst))
+        log.fefrv('decrypt_file() called, with src: >>{}<< dst: >>{}<<'.format(src, dst))
 
         src_fhandle = open(src, 'rb')
         dst_fhandle = open(dst, 'wb')

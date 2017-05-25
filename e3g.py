@@ -26,9 +26,9 @@ def _process_checkout_subcommand(dest):
     log.vvv("destination folder is: " + str(sf_name) + " shadow folder: " + str(shadow_dir))
 
     try:
-        shadow_files = os.listdir(sf_name)
-        for shadow_file in shadow_files:
-            os.remove(os.path.join(shadow_dir, shadow_file))
+        plain_files = os.listdir(sf_name)
+        for plain_file in plain_files:
+            os.remove(os.path.join(sf_name, plain_file))
     except:
         print ("Error: Can not clear secret directory, do i have sufficient permissions? ")
         sys.exit(1)
@@ -40,6 +40,8 @@ def _process_checkout_subcommand(dest):
     # be careful with the dot_e3g_public, its content may now be unicode not str or bytes.
     if not dot_e3g_public.has_key('salt'):
         print "Error: .e3g_public file in " + str(shadow_dir) + " file is inaccessible or corrupted. "
+
+    util.save_dict_as_json_to_pathname(dst_pathname=os.path.join(sf_name, '.e3g_public'), py_dict=dot_e3g_public)
 
     # this maybe a unicode not str.
     dot_e3g_public['salt'] = str(dot_e3g_public['salt'])
