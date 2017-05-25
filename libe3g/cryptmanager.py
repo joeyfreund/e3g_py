@@ -24,8 +24,8 @@ def get_new_random_salt():
 
     result = cryptmode.get_new_random_salt_for_current_mode().encode('hex')
 
-    log.fefr("get_new_random_salt() returning. result (as hex encoded): ")
-    log.fefr(str(result), label=False)
+    log.fefrv("get_new_random_salt() returning. result (as hex encoded): ")
+    log.fefrv(str(result), label=False)
     return result
 
 
