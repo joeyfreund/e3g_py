@@ -25,6 +25,9 @@ def _process_checkout_subcommand(dest):
     shadow_dir = util.get_shadow_name(name=sf_name)
     log.vvv("destination folder is: " + str(sf_name) + " shadow folder: " + str(shadow_dir))
 
+    if not os.path.exists(sf_name):
+        os.makedirs(sf_name)
+
     try:
         plain_files = os.listdir(sf_name)
         for plain_file in plain_files:
@@ -149,9 +152,9 @@ def _process_rdy_subcommand(dest):
 
 
 def _process_init_subcommand(dest):
-    """ Process the init subcommand. May block and ask user some questions. 
-    dest is the name of the new secret folder to be inited. 
-    
+    """ Process the init subcommand. May block and ask user some questions.
+    dest is the name of the new secret folder to be inited.
+
     """
 
     log.fefr("_process_init_subcommand() called with dest: " + str(dest))
@@ -238,5 +241,3 @@ def _parse_cmdline():
 
 if "__main__" == __name__:
     _parse_cmdline()
-
-
