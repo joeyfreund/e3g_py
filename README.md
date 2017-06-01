@@ -31,12 +31,13 @@ $ e3g.py checkout sf
 This will also ask for password. if the password is wrong or the ciphertext files have been tampered with an error will be raised. 
 
 ## trouble shooting errors, dependencies 
-make sure `python2` is installed on the system and `e3g.py` file is executable. (alternatively run `$ python e3g.py` ....)
 
-the python cryptography library is also needed. 
+Make sure `python2` is installed on the system and `e3g.py` file is executable. (alternatively run `$ python e3g.py` ....)
+
+In order to install all Python dependencies, run
 
 ```sh
-$ pip install cryptography
+$ pip install -r requirements.txt
 ```
 
 
